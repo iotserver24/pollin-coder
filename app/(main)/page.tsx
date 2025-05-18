@@ -18,7 +18,6 @@ import { use, useState, useRef, useTransition, useEffect } from "react";
 import { createChat } from "./actions";
 import { Context } from "./providers";
 import Header from "@/components/header";
-import { useS3Upload } from "next-s3-upload";
 import UploadIcon from "@/components/icons/upload-icon";
 import { XCircleIcon } from "@heroicons/react/20/solid";
 import { MODELS, SUGGESTED_PROMPTS } from "@/lib/constants";
@@ -45,15 +44,35 @@ export default function Home() {
     setAnimationLoaded(true);
   }, []);
 
-  const { uploadToS3 } = useS3Upload();
   const handleScreenshotUpload = async (event: any) => {
     if (prompt.length === 0) setPrompt("Build this");
     setQuality("low");
     setScreenshotLoading(true);
     let file = event.target.files[0];
-    const { url } = await uploadToS3(file);
-    setScreenshotUrl(url);
-    setScreenshotLoading(false);
+    
+    // Create form data
+    const formData = new FormData();
+    formData.append('reqtype', 'fileupload');
+    formData.append('fileToUpload', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      const data = await response.json();
+      setScreenshotUrl(data.url);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setScreenshotLoading(false);
+    }
   };
 
   const textareaResizePrompt = prompt
