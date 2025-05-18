@@ -22,7 +22,7 @@ export async function generateMetadata({
 
   return {
     title,
-    description: `An app generated on LlamaCoder.io: ${title}`,
+    description: `An app generated on pollin ai by R3AP3R editz: ${title}`,
     openGraph: {
       images: [`/api/og?${searchParams}`],
     },

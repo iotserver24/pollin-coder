@@ -1,5 +1,5 @@
 {
-  "name": "llamacoder-new",
+  "name": "pollin-coder",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -40,6 +40,7 @@
     "next": "15.1.4",
     "next-plausible": "^3.12.4",
     "next-s3-upload": "^0.3.4",
+    "pollin-coder": "file:",
     "react": "^19",
     "react-dom": "^19",
     "react-error-boundary": "^4.1.2",
