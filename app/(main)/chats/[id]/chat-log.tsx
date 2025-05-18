@@ -60,10 +60,18 @@ export default function ChatLog({
 }
 
 function UserMessage({ content }: { content: string }) {
+  // Detect [Reference image: <url>] pattern
+  const imageMatch = content.match(/\[Reference image: (https?:\/\/[^\]]+)\]/);
+  let imageUrl = imageMatch ? imageMatch[1] : null;
+  let messageText = imageUrl ? content.replace(imageMatch[0], '').trim() : content;
+
   return (
     <div className="relative inline-flex max-w-[80%] items-end gap-3 self-end">
       <div className="whitespace-pre-wrap rounded bg-gray-900 px-4 py-2 text-white shadow border border-purple-500/30">
-        {content}
+        {imageUrl && (
+          <img src={imageUrl} alt="Reference" className="mb-2 max-w-xs rounded" />
+        )}
+        {messageText}
       </div>
     </div>
   );
