@@ -34,7 +34,7 @@ export default async function Image({
 
   let title = message
     ? message.chat.title
-    : "An app generated on LlamaCoder.io";
+    : "An app generated on pollin-coder by R3AAP3R editz";
 
   return new ImageResponse(
     (
@@ -43,16 +43,35 @@ export default async function Image({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          position: "relative",
+          width: "100%",
+          height: "100%",
         }}
       >
         {/* @ts-expect-error */}
         <img src={backgroundSrc} height="100%" alt="" />
+        {/* Semi-transparent overlay */}
         <div
           style={{
             position: "absolute",
-            fontSize: 50,
-            color: "black",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            fontSize: 60,
+            fontWeight: "bold",
+            color: "white",
             padding: "50px 200px",
+            textAlign: "center",
+            textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+            maxWidth: "1000px",
+            lineHeight: 1.2,
           }}
         >
           {title}
