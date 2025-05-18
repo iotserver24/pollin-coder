@@ -63,7 +63,7 @@ function UserMessage({ content }: { content: string }) {
   // Detect [Reference image: <url>] pattern
   const imageMatch = content.match(/\[Reference image: (https?:\/\/[^\]]+)\]/);
   let imageUrl = imageMatch ? imageMatch[1] : null;
-  let messageText = imageUrl ? content.replace(imageMatch[0], '').trim() : content;
+  let messageText = imageMatch ? content.replace(imageMatch[0], '').trim() : content;
 
   return (
     <div className="relative inline-flex max-w-[80%] items-end gap-3 self-end">
