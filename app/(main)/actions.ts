@@ -92,8 +92,13 @@ export async function createChat(
     }
     
     const result = await response.json();
-    const mostSimilarExample = result.choices[0].message?.content || "none";
-    return mostSimilarExample;
+    const mostSimilarExample = result.choices[0].message?.content?.toLowerCase().trim() || "none";
+    
+    // Validate and normalize the response
+    const validExamples = ["landing page", "blog app", "quiz app", "pomodoro timer"];
+    const normalizedExample = validExamples.includes(mostSimilarExample) ? mostSimilarExample : "none";
+    
+    return normalizedExample;
   }
 
   const [title, mostSimilarExample] = await Promise.all([

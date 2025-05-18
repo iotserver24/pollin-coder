@@ -79,12 +79,13 @@ export default function CodeViewer({
       <div className="flex h-16 shrink-0 items-center justify-between border-b border-gray-300 px-4">
         <div className="inline-flex items-center gap-4">
           <button
-            className="text-gray-400 hover:text-gray-700"
+            className="text-white hover:text-gray-300"
             onClick={onClose}
+            title="Close"
           >
             <CloseIcon className="size-5" />
           </button>
-          <span>
+          <span className="text-white">
             {title} v{currentVersion + 1}
           </span>
         </div>
@@ -93,14 +94,16 @@ export default function CodeViewer({
             <button
               onClick={() => onTabChange("code")}
               data-active={activeTab === "code" ? true : undefined}
-              className="inline-flex h-7 w-16 items-center justify-center rounded text-xs font-medium data-[active]:bg-blue-500 data-[active]:text-white"
+              className="inline-flex h-7 w-16 items-center justify-center rounded text-xs font-medium text-white data-[active]:bg-blue-500 data-[active]:text-white"
+              title="View Code"
             >
               Code
             </button>
             <button
               onClick={() => onTabChange("preview")}
               data-active={activeTab === "preview" ? true : undefined}
-              className="inline-flex h-7 w-16 items-center justify-center rounded text-xs font-medium data-[active]:bg-blue-500 data-[active]:text-white"
+              className="inline-flex h-7 w-16 items-center justify-center rounded text-xs font-medium text-white data-[active]:bg-blue-500 data-[active]:text-white"
+              title="View Preview"
             >
               Preview
             </button>
@@ -160,7 +163,7 @@ export default function CodeViewer({
         <div className="inline-flex items-center gap-2.5 text-sm">
           <Share message={message && !streamApp ? message : undefined} />
           <button
-            className="inline-flex items-center gap-1 rounded border border-gray-300 px-1.5 py-0.5 text-sm text-gray-600 transition enabled:hover:bg-white disabled:opacity-50"
+            className="inline-flex items-center gap-1 rounded border border-gray-300 px-1.5 py-0.5 text-sm text-white transition enabled:hover:bg-white/10 disabled:opacity-50"
             onClick={() => setRefresh((r) => r + 1)}
           >
             <RefreshIcon className="size-3" />
@@ -170,20 +173,21 @@ export default function CodeViewer({
         <div className="flex items-center justify-end gap-3">
           {previousMessage ? (
             <button
-              className="text-gray-900"
+              className="text-white"
               onClick={() => onMessageChange(previousMessage)}
+              title="Previous Version"
             >
               <ChevronLeftIcon className="size-4" />
             </button>
           ) : (
-            <button className="text-gray-900 opacity-25" disabled>
+            <button className="text-white opacity-25" disabled title="Previous Version">
               <ChevronLeftIcon className="size-4" />
             </button>
           )}
 
-          <p className="text-sm">
+          <p className="text-sm text-white">
             Version <span className="tabular-nums">{currentVersion + 1}</span>{" "}
-            <span className="text-gray-400">of</span>{" "}
+            <span className="text-white">of</span>{" "}
             <span className="tabular-nums">
               {Math.max(currentVersion + 1, assistantMessages.length)}
             </span>
@@ -191,13 +195,14 @@ export default function CodeViewer({
 
           {nextMessage ? (
             <button
-              className="text-gray-900"
+              className="text-white"
               onClick={() => onMessageChange(nextMessage)}
+              title="Next Version"
             >
               <ChevronRightIcon className="size-4" />
             </button>
           ) : (
-            <button className="text-gray-900 opacity-25" disabled>
+            <button className="text-white opacity-25" disabled title="Next Version">
               <ChevronRightIcon className="size-4" />
             </button>
           )}

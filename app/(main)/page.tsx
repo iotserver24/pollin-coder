@@ -6,13 +6,15 @@ import ArrowRightIcon from "@/components/icons/arrow-right";
 import LightningBoltIcon from "@/components/icons/lightning-bolt";
 import LoadingButton from "@/components/loading-button";
 import Spinner from "@/components/spinner";
+import ThreeBackground from "@/components/ThreeBackground";
+import ThreeBackgroundScene from "@/components/ThreeBackgroundScene";
 import * as Select from "@radix-ui/react-select";
 import assert from "assert";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { use, useState, useRef, useTransition } from "react";
+import { use, useState, useRef, useTransition, useEffect } from "react";
 import { createChat } from "./actions";
 import { Context } from "./providers";
 import Header from "@/components/header";
@@ -34,8 +36,14 @@ export default function Home() {
   const [screenshotLoading, setScreenshotLoading] = useState(false);
   const selectedModel = MODELS.find((m) => m.value === model);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [animationLoaded, setAnimationLoaded] = useState(false);
 
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    // Trigger animations after component mounts
+    setAnimationLoaded(true);
+  }, []);
 
   const { uploadToS3 } = useS3Upload();
   const handleScreenshotUpload = async (event: any) => {
@@ -55,12 +63,20 @@ export default function Home() {
 
   return (
     <div className="relative flex grow flex-col bg-black">
+      {/* 3D Background */}
+      <div className="fixed inset-0 z-0">
+        <ThreeBackgroundScene />
+      </div>
+
       <div className="isolate flex h-full grow flex-col">
         <Header />
 
         <div className="mt-10 flex grow flex-col items-center px-4 lg:mt-16">
           <div
-            className="mb-4 inline-flex shrink-0 items-center rounded-full border-[0.5px] border-purple-500 bg-black px-7 py-2 text-xs text-purple-300 shadow-[0px_1px_1px_0px_rgba(168,85,247,0.35)] md:text-base"
+            className={`mb-4 inline-flex shrink-0 items-center rounded-full border-[0.5px] border-purple-500 bg-black px-7 py-2 text-xs text-purple-300 shadow-[0px_1px_1px_0px_rgba(168,85,247,0.35)] md:text-base opacity-0 ${
+              animationLoaded ? "animate-fadeIn" : ""
+            }`}
+            style={{ animationDelay: "0.2s", animationFillMode: "forwards" }}
           >
             <span className="text-center">
               Created by <span className="font-semibold text-purple-400">pollinations ai</span> and
@@ -68,14 +84,22 @@ export default function Home() {
             </span>
           </div>
 
-          <h1 className="mt-4 text-balance text-center text-4xl leading-none text-white md:text-[64px] lg:mt-8">
+          <h1 
+            className={`mt-4 text-balance text-center text-4xl leading-none text-white md:text-[64px] lg:mt-8 opacity-0 ${
+              animationLoaded ? "animate-slideUp" : ""
+            }`}
+            style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
+          >
             Turn your <span className="text-purple-500">idea</span>
             <br className="hidden md:block" /> into an{" "}
             <span className="text-purple-500">app</span>
           </h1>
 
           <form
-            className="relative w-full max-w-2xl pt-6 lg:pt-12"
+            className={`relative w-full max-w-2xl pt-6 lg:pt-12 opacity-0 ${
+              animationLoaded ? "animate-slideUp" : ""
+            }`}
+            style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}
             action={async (formData) => {
               startTransition(async () => {
                 const { prompt, model, quality } = Object.fromEntries(formData);
@@ -112,7 +136,7 @@ export default function Home() {
             }}
           >
             <Fieldset>
-              <div className="relative flex w-full max-w-2xl rounded-xl border-4 border-purple-500 bg-gray-900 pb-10">
+              <div className="relative flex w-full max-w-2xl rounded-xl border-4 border-purple-500 bg-gray-900 pb-10 hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-shadow duration-300">
                 <div className="w-full">
                   {screenshotLoading && (
                     <div className="relative mx-3 mt-3">
@@ -138,7 +162,7 @@ export default function Home() {
                         type="button"
                         id="x-circle-icon"
                         aria-label="Remove screenshot"
-                        className="absolute -right-3 -top-4 left-14 z-10 size-5 rounded-full bg-gray-700 text-white hover:text-gray-300"
+                        className="absolute -right-3 -top-4 left-14 z-10 size-5 rounded-full bg-gray-700 text-white hover:text-gray-300 hover:bg-gray-600 transition-colors"
                         onClick={() => {
                           setScreenshotUrl(undefined);
                           if (fileInputRef.current) {
@@ -182,7 +206,7 @@ export default function Home() {
                       value={model}
                       onValueChange={setModel}
                     >
-                      <Select.Trigger className="inline-flex items-center gap-1 rounded-md p-1 text-sm text-gray-400 hover:bg-gray-800 hover:text-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple-500">
+                      <Select.Trigger className="inline-flex items-center gap-1 rounded-md p-1 text-sm text-gray-400 hover:bg-gray-800 hover:text-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple-500 transition-colors">
                         <Select.Value aria-label={model}>
                           <span>{selectedModel?.label}</span>
                         </Select.Value>
@@ -197,7 +221,7 @@ export default function Home() {
                               <Select.Item
                                 key={m.value}
                                 value={m.value}
-                                className="flex cursor-pointer items-center gap-1 rounded-md p-1 text-sm text-gray-300 data-[highlighted]:bg-gray-800 data-[highlighted]:outline-none"
+                                className="flex cursor-pointer items-center gap-1 rounded-md p-1 text-sm text-gray-300 data-[highlighted]:bg-gray-800 data-[highlighted]:outline-none transition-colors"
                               >
                                 <Select.ItemText className="inline-flex items-center gap-2 text-gray-300">
                                   {m.label}
@@ -221,7 +245,7 @@ export default function Home() {
                       value={quality}
                       onValueChange={setQuality}
                     >
-                      <Select.Trigger className="inline-flex items-center gap-1 rounded p-1 text-sm text-gray-400 hover:bg-gray-800 hover:text-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple-500">
+                      <Select.Trigger className="inline-flex items-center gap-1 rounded p-1 text-sm text-gray-400 hover:bg-gray-800 hover:text-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple-500 transition-colors">
                         <Select.Value aria-label={quality}>
                           <span className="max-sm:hidden">
                             {quality === "low"
@@ -249,7 +273,7 @@ export default function Home() {
                               <Select.Item
                                 key={q.value}
                                 value={q.value}
-                                className="flex cursor-pointer items-center gap-1 rounded-md p-1 text-sm text-gray-300 data-[highlighted]:bg-gray-800 data-[highlighted]:outline-none"
+                                className="flex cursor-pointer items-center gap-1 rounded-md p-1 text-sm text-gray-300 data-[highlighted]:bg-gray-800 data-[highlighted]:outline-none transition-colors"
                               >
                                 <Select.ItemText className="inline-flex items-center gap-2 text-gray-300">
                                   {q.label}
@@ -271,7 +295,7 @@ export default function Home() {
                         htmlFor="screenshot"
                         className="flex cursor-pointer gap-2 text-sm text-gray-400 hover:underline"
                       >
-                        <div className="flex size-6 items-center justify-center rounded bg-purple-800 hover:bg-purple-700">
+                        <div className="flex size-6 items-center justify-center rounded bg-purple-800 hover:bg-purple-700 transition-colors">
                           <UploadIcon className="size-4" />
                         </div>
                         <div className="flex items-center justify-center transition hover:text-gray-300">
@@ -294,7 +318,7 @@ export default function Home() {
                     <div className="pointer-events-none absolute inset-0 -bottom-[1px] rounded bg-purple-600" />
 
                     <LoadingButton
-                      className="relative inline-flex size-6 items-center justify-center rounded bg-purple-600 font-medium text-white shadow-lg outline-purple-300 hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="relative inline-flex size-6 items-center justify-center rounded bg-purple-600 font-medium text-white shadow-lg outline-purple-300 hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all hover:shadow-[0_0_10px_rgba(168,85,247,0.8)] hover:scale-110"
                       type="submit"
                     >
                       <ArrowRightIcon />
@@ -309,13 +333,19 @@ export default function Home() {
                   />
                 )}
               </div>
-              <div className="mt-4 flex w-full flex-wrap justify-center gap-3">
-                {SUGGESTED_PROMPTS.map((v) => (
+              <div 
+                className={`mt-4 flex w-full flex-wrap justify-center gap-3 opacity-0 ${
+                  animationLoaded ? "animate-fadeIn" : ""
+                }`} 
+                style={{ animationDelay: "0.8s", animationFillMode: "forwards" }}
+              >
+                {SUGGESTED_PROMPTS.map((v, index) => (
                   <button
                     key={v.title}
                     type="button"
                     onClick={() => setPrompt(v.description)}
-                    className="rounded bg-gray-800 px-2.5 py-1.5 text-xs text-gray-300 hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500"
+                    className="rounded bg-gray-800 px-2.5 py-1.5 text-xs text-gray-300 hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 transition-all hover:shadow-[0_0_10px_rgba(168,85,247,0.5)] hover:scale-105"
+                    style={{ animationDelay: `${0.8 + index * 0.1}s` }}
                   >
                     {v.title}
                   </button>
@@ -325,7 +355,12 @@ export default function Home() {
           </form>
         </div>
 
-        <footer className="flex w-full flex-col items-center justify-between space-y-3 px-5 pb-3 pt-5 text-center text-gray-400 sm:flex-row sm:pt-2">
+        <footer 
+          className={`flex w-full flex-col items-center justify-between space-y-3 px-5 pb-3 pt-5 text-center text-gray-400 sm:flex-row sm:pt-2 opacity-0 ${
+            animationLoaded ? "animate-fadeIn" : ""
+          }`}
+          style={{ animationDelay: "1s", animationFillMode: "forwards" }}
+        >
           <div>
             <div className="font-medium">
               Built by{" "}
@@ -359,7 +394,7 @@ function LoadingMessage({
   screenshotUrl: string | undefined;
 }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-gray-900 px-1 py-3 md:px-3">
+    <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-gray-900 px-1 py-3 md:px-3 animate-fadeIn">
       <div className="flex flex-col items-center justify-center gap-2 text-gray-300">
         <span className="animate-pulse text-balance text-center text-sm md:text-base">
           {isHighQuality

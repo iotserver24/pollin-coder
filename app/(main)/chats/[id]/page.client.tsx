@@ -12,6 +12,7 @@ import CodeViewer from "./code-viewer";
 import CodeViewerLayout from "./code-viewer-layout";
 import type { Chat } from "./page";
 import { Context } from "../../providers";
+import ThreeBackgroundScene from "@/components/ThreeBackgroundScene";
 
 // Helper for parsing SSE streams
 class ChatCompletionStream {
@@ -154,13 +155,18 @@ export default function PageClient({ chat }: { chat: Chat }) {
 
   return (
     <div className="h-dvh">
-      <div className="flex h-full">
+      {/* 3D Background */}
+      <div className="fixed inset-0 z-0">
+        <ThreeBackgroundScene />
+      </div>
+
+      <div className="flex h-full relative z-10">
         <div className="mx-auto flex w-full shrink-0 flex-col overflow-hidden lg:w-1/2">
           <div className="flex items-center gap-4 px-4 py-4">
             <Link href="/">
               <LogoSmall />
             </Link>
-            <p className="italic text-gray-500">{chat.title}</p>
+            <p className="italic text-white">{chat.title}</p>
           </div>
 
           <ChatLog

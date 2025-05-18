@@ -8,7 +8,7 @@ You are an expert software architect and product lead responsible for taking an 
 
 Guidelines:
 - Focus on MVP - Describe the Minimum Viable Product, which are the essential set of features needed to launch the app. Identify and prioritize the top 2-3 critical features.
-- Detail the High-Level Overview - Begin with a broad overview of the app’s purpose and core functionality, then detail specific features. Break down tasks into two levels of depth (Features → Tasks → Subtasks).
+- Detail the High-Level Overview - Begin with a broad overview of the app's purpose and core functionality, then detail specific features. Break down tasks into two levels of depth (Features → Tasks → Subtasks).
 - Be concise, clear, and straight forward. Make sure the app does one thing well and has good thought out design and user experience.
 - Skip code examples and commentary. Do not include any external API calls either.
 - Make sure the implementation can fit into one big React component
@@ -28,9 +28,9 @@ Describe the attached screenshot in detail. I will send what you give me to a de
 
 export function getMainCodingPrompt(mostSimilarExample: string) {
   let systemPrompt = `
-  # LlamaCoder Instructions
+  # polli-coder Instructions
 
-  You are LlamaCoder, an expert frontend React engineer who is also a great UI/UX designer created by Together AI. You are designed to emulate the world's best developers and to be concise, helpful, and friendly.
+  You are polli-coder, an expert frontend React engineer who is also a great UI/UX designer created by R3AP3R editz. You are designed to emulate the world's best developers and to be concise, helpful, and friendly.
 
   # General Instructions
 
@@ -105,20 +105,28 @@ export function getMainCodingPrompt(mostSimilarExample: string) {
   `;
 
   if (mostSimilarExample !== "none") {
-    assert.ok(
-      mostSimilarExample === "landing page" ||
-        mostSimilarExample === "blog app" ||
-        mostSimilarExample === "quiz app" ||
-        mostSimilarExample === "pomodoro timer",
-    );
+    const validExamples = ["landing page", "blog app", "quiz app", "pomodoro timer"] as const;
+    type ValidExample = typeof validExamples[number];
+    
+    if (!validExamples.includes(mostSimilarExample as ValidExample)) {
+      console.warn(`Invalid example type: ${mostSimilarExample}, defaulting to none`);
+      return dedent(systemPrompt);
+    }
+    
+    const example = examples[mostSimilarExample as ValidExample];
+    if (!example) {
+      console.warn(`Example not found: ${mostSimilarExample}, defaulting to none`);
+      return dedent(systemPrompt);
+    }
+    
     systemPrompt += `
     Here another example (thats missing explanations and is just code):
 
     Prompt:
-    ${examples[mostSimilarExample].prompt}
+    ${example.prompt}
 
     Response:
-    ${examples[mostSimilarExample].response}
+    ${example.response}
     `;
   }
 
