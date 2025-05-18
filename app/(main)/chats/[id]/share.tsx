@@ -17,7 +17,15 @@ export function Share({ message }: { message?: Message }) {
       variant: "default",
     });
 
-    await navigator.clipboard.writeText(shareUrl.href);
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl.href);
+      } else {
+        console.warn("Clipboard API not available");
+      }
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+    }
   }
 
   return (
