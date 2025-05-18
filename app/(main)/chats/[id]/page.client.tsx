@@ -16,17 +16,17 @@ import ThreeBackgroundScene from "@/components/ThreeBackgroundScene";
 
 // Helper for parsing SSE streams
 class ChatCompletionStream {
-  static fromReadableStream(stream) {
+  static fromReadableStream(stream: ReadableStream) {
     const reader = stream.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
     let accumulatedContent = "";
-    let contentHandlers = [];
-    let finalContentHandlers = [];
+    let contentHandlers: ((delta: string, content: string) => void)[] = [];
+    let finalContentHandlers: ((content: string) => void)[] = [];
 
     const processBuffer = () => {
       const lines = buffer.split("\n");
-      buffer = lines.pop(); // Keep any incomplete line for next time
+      buffer = lines.pop() || ""; // Keep any incomplete line for next time
 
       for (const line of lines) {
         if (line.startsWith("data: ")) {
@@ -66,11 +66,11 @@ class ChatCompletionStream {
     process();
 
     return {
-      on(event, handler) {
+      on(event: 'content' | 'finalContent', handler: ((delta: string, content: string) => void) | ((content: string) => void)) {
         if (event === "content") {
-          contentHandlers.push(handler);
+          contentHandlers.push(handler as (delta: string, content: string) => void);
         } else if (event === "finalContent") {
-          finalContentHandlers.push(handler);
+          finalContentHandlers.push(handler as (content: string) => void);
         }
         return this;
       }
@@ -131,7 +131,7 @@ export default function PageClient({ chat }: { chat: Chat }) {
             setActiveTab("preview");
           }
         })
-        .on("finalContent", async (finalText) => {
+        .on("finalContent", async (finalText: string) => {
           startTransition(async () => {
             const message = await createMessage(
               chat.id,

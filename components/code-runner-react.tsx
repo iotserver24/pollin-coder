@@ -40,7 +40,7 @@ function SimpleCodeViewer({ code }: { code: string }) {
             <h3 className="text-lg font-medium text-red-800 mb-2">Preview Error</h3>
             <p className="text-sm text-red-600">
               Unable to preview the code. The code sandbox could not be initialized.
-              The code is still displayed in the "Code" tab.
+              The code is still displayed in the {"\""} Code {"\""} tab.
             </p>
           </div>
         )}
