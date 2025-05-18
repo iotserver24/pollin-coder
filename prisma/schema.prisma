@@ -24,7 +24,7 @@ model Chat {
   quality           String
   prompt            String
   title             String
-  llamaCoderVersion String    @default("v2")
+  pollinCoderVersion String    @default("v2")
   shadcn            Boolean
   messages          Message[]
   createdAt         DateTime  @default(now())

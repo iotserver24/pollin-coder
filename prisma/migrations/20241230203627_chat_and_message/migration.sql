@@ -9,7 +9,7 @@ CREATE TABLE "Chat" (
     "quality" TEXT NOT NULL,
     "prompt" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "llamaCoderVersion" TEXT NOT NULL DEFAULT 'v2',
+    "pollinCoderVersion" TEXT NOT NULL DEFAULT 'v2',
     "shadcn" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

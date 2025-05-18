@@ -1,7 +1,10 @@
-# Pollinations.AI API Documentation
+# Pollin Coder API Documentation
 
-**World's Most Accessible Open GenAI Platform 🚀
-Text, Image & Audio APIs direct integration (no signup)**
+**The API for Pollin Coder – an enhanced, open-source AI code and content generation platform.**
+
+---
+
+> **Note:** This documentation describes the API as implemented in Pollin Coder, a project by R3AP3R editz, based on and extended from open-source technologies. All features, endpoints, and integrations are unique to this deployment.
 
 ---
 
