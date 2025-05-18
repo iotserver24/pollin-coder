@@ -60,7 +60,6 @@ export async function POST(req: Request) {
   return new Response(response.body);
 }
 
-// Use dynamic imports for heavy libraries
-// This significantly reduces the Edge Function bundle size
-export const runtime = "edge";
+// Comment out the Edge runtime directive to use Node.js runtime instead
+// export const runtime = "edge";
 export const maxDuration = 45;
