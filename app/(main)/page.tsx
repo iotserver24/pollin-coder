@@ -21,10 +21,18 @@ import Header from "@/components/header";
 import UploadIcon from "@/components/icons/upload-icon";
 import { XCircleIcon } from "@heroicons/react/20/solid";
 import { MODELS, SUGGESTED_PROMPTS } from "@/lib/constants";
+import { getPrisma } from "@/lib/prisma";
+
+async function getProjectCount() {
+  const prisma = getPrisma();
+  return await prisma.chat.count();
+}
 
 export default function Home() {
   const { setStreamPromise } = use(Context);
   const router = useRouter();
+  const [projectCount, setProjectCount] = useState<number>(0);
+  const [isCountLoading, setIsCountLoading] = useState(true);
 
   const [prompt, setPrompt] = useState("");
   const [model, setModel] = useState(MODELS[0].value);
@@ -42,6 +50,19 @@ export default function Home() {
   useEffect(() => {
     // Trigger animations after component mounts
     setAnimationLoaded(true);
+
+    // Fetch project count when component mounts
+    setIsCountLoading(true);
+    fetch('/api/project-count')
+      .then(res => res.json())
+      .then(data => {
+        setProjectCount(data.count);
+        setIsCountLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch project count:', err);
+        setIsCountLoading(false);
+      });
   }, []);
 
   const handleScreenshotUpload = async (event: any) => {
@@ -101,6 +122,23 @@ export default function Home() {
               Created by <span className="font-semibold text-purple-400">pollinations ai</span> and
               <span className="font-semibold text-purple-400"> R3AP3R editz </span>
             </span>
+          </div>
+
+          <div
+            className={`mt-2 text-center text-sm text-purple-300 opacity-0 ${
+              animationLoaded ? "animate-fadeIn" : ""
+            }`}
+            style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
+          >
+            Total Projects Built:{" "}
+            {isCountLoading ? (
+              <span className="inline-flex items-center">
+                <Spinner className="mr-1 size-3" />
+                <span className="animate-pulse">Loading...</span>
+              </span>
+            ) : (
+              <span className="font-semibold">{projectCount}</span>
+            )}
           </div>
 
           <h1 
