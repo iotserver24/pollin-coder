@@ -544,7 +544,7 @@ export function getMainCodingPrompt(mostSimilarExample: string) {
         setError(null)
 
         const formData = new FormData()
-        formData.append('reqtype', 'file')
+        formData.append('reqtype', 'fileupload')
         formData.append('fileToUpload', file)
 
         const response = await fetch('https://catbox.moe/user/api.php', {
@@ -552,13 +552,20 @@ export function getMainCodingPrompt(mostSimilarExample: string) {
           body: formData
         })
 
-        if (!response.ok) throw new Error('Upload failed')
+        if (!response.ok) {
+          const errorText = await response.text()
+          throw new Error(errorText || 'Upload failed')
+        }
         
         const fileUrl = await response.text()
+        if (!fileUrl.startsWith('http')) {
+          throw new Error('Invalid response from server')
+        }
+        
         setFileUrl(fileUrl)
       } catch (err) {
         console.error('Upload error:', err)
-        setError('Failed to upload file. Please try again.')
+        setError(err instanceof Error ? err.message : 'Failed to upload file. Please try again.')
       } finally {
         setUploading(false)
       }
