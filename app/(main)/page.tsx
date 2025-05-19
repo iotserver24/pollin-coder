@@ -36,28 +36,12 @@ export default function Home() {
   const selectedModel = MODELS.find((m) => m.value === model);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [animationLoaded, setAnimationLoaded] = useState(false);
-  const [projectCount, setProjectCount] = useState<number | null>(null);
 
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     // Trigger animations after component mounts
     setAnimationLoaded(true);
-    
-    // Fetch project count
-    const fetchProjectCount = async () => {
-      try {
-        const response = await fetch('/api/project-counts');
-        if (response.ok) {
-          const data = await response.json();
-          setProjectCount(data.count);
-        }
-      } catch (error) {
-        console.error('Error fetching project count:', error);
-      }
-    };
-    
-    fetchProjectCount();
   }, []);
 
   const handleScreenshotUpload = async (event: any) => {
@@ -119,24 +103,11 @@ export default function Home() {
             </span>
           </div>
 
-          {projectCount !== null && (
-            <div
-              className={`mb-2 inline-flex shrink-0 items-center rounded-full border-[0.5px] border-green-500 bg-black px-5 py-1 text-xs text-green-300 shadow-[0px_1px_1px_0px_rgba(74,222,128,0.35)] md:text-sm opacity-0 ${
-                animationLoaded ? "animate-fadeIn" : ""
-              }`}
-              style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
-            >
-              <span className="text-center">
-                <span className="font-semibold text-green-400">{projectCount.toLocaleString()}</span> projects created so far!
-              </span>
-            </div>
-          )}
-
           <h1 
             className={`mt-4 text-balance text-center text-4xl leading-none text-white md:text-[64px] lg:mt-8 opacity-0 ${
               animationLoaded ? "animate-slideUp" : ""
             }`}
-            style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}
+            style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
           >
             Turn your <span className="text-purple-500">idea</span>
             <br className="hidden md:block" /> into an{" "}
