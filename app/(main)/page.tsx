@@ -107,18 +107,24 @@ export default function Home() {
             </span>
           </div>
 
-          {projectStats && (
-            <div
-              className={`mb-4 inline-flex shrink-0 items-center rounded-full border-[0.5px] border-purple-500 bg-black px-7 py-2 text-xs text-purple-300 shadow-[0px_1px_1px_0px_rgba(168,85,247,0.35)] md:text-base opacity-0 ${
-                animationLoaded ? "animate-fadeIn" : ""
-              }`}
-              style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
-            >
-              <span className="text-center">
-                Total Projects Built: <span className="font-semibold text-purple-400">{projectStats.totalProjects}</span>
-              </span>
-            </div>
-          )}
+          <div
+            className={`mb-4 inline-flex shrink-0 items-center rounded-full border-[0.5px] border-purple-500 bg-black px-7 py-2 text-xs text-purple-300 shadow-[0px_1px_1px_0px_rgba(168,85,247,0.35)] md:text-base opacity-0 ${
+              animationLoaded ? "animate-fadeIn" : ""
+            }`}
+            style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
+          >
+            <span className="text-center flex items-center gap-2">
+              Total Projects Built:{" "}
+              {projectStats ? (
+                <span className="font-semibold text-purple-400">{projectStats.totalProjects}</span>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Spinner className="size-3" />
+                  <span className="animate-pulse">Loading...</span>
+                </div>
+              )}
+            </span>
+          </div>
 
           <h1 
             className={`mt-4 text-balance text-center text-4xl leading-none text-white md:text-[64px] lg:mt-8 opacity-0 ${
