@@ -1,14 +1,35 @@
 "use client";
 
-import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useMemo, useEffect } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Particle animation
 function ParticleField({ count = 2000 }) {
   const points = useRef<THREE.Points>(null);
+  const { gl } = useThree();
   
+  // Handle WebGL context loss
+  useEffect(() => {
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      console.warn('WebGL context lost');
+    };
+
+    const handleContextRestored = () => {
+      console.log('WebGL context restored');
+    };
+
+    gl.domElement.addEventListener('webglcontextlost', handleContextLost);
+    gl.domElement.addEventListener('webglcontextrestored', handleContextRestored);
+
+    return () => {
+      gl.domElement.removeEventListener('webglcontextlost', handleContextLost);
+      gl.domElement.removeEventListener('webglcontextrestored', handleContextRestored);
+    };
+  }, [gl]);
+
   // Generate random points in a 3D space
   const particlePositions = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -45,8 +66,32 @@ function ParticleField({ count = 2000 }) {
 }
 
 export default function ThreeCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (canvasRef.current) {
+        const gl = canvasRef.current.getContext('webgl');
+        if (gl) {
+          gl.getExtension('WEBGL_lose_context')?.loseContext();
+        }
+      }
+    };
+  }, []);
+
   return (
-    <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+    <Canvas 
+      ref={canvasRef}
+      camera={{ position: [0, 0, 5], fov: 60 }}
+      gl={{ 
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
+        failIfMajorPerformanceCaveat: true
+      }}
+      dpr={[1, 2]} // Limit pixel ratio for better performance
+    >
       <ambientLight intensity={0.2} />
       <ParticleField />
       <mesh scale={[80, 80, 1]} position={[0, 0, -5]}>
