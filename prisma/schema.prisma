@@ -19,15 +19,15 @@ model GeneratedApp {
 }
 
 model Chat {
-  id                String    @id @default(nanoid(16))
-  model             String
-  quality           String
-  prompt            String
-  title             String
+  id                 String    @id @default(nanoid(16))
+  model              String
+  quality            String
+  prompt             String
+  title              String
   pollinCoderVersion String    @default("v2")
-  shadcn            Boolean
-  messages          Message[]
-  createdAt         DateTime  @default(now())
+  shadcn             Boolean
+  messages           Message[]
+  createdAt          DateTime  @default(now())
 }
 
 model Message {
