@@ -67,7 +67,8 @@ export default function Home() {
 
   const handleScreenshotUpload = async (event: any) => {
     if (prompt.length === 0) setPrompt("Build this");
-    setQuality("low");
+    // Keep high quality by default even for screenshots
+    // setQuality("low");
     setScreenshotLoading(true);
     let file = event.target.files[0];
     
@@ -297,6 +298,7 @@ export default function Home() {
 
                     <div className="h-4 w-px bg-gray-700 max-sm:hidden" />
 
+                    {/* Quality selector commented out - using high quality by default 
                     <Select.Root
                       name="quality"
                       value={quality}
@@ -346,6 +348,11 @@ export default function Home() {
                         </Select.Content>
                       </Select.Portal>
                     </Select.Root>
+                    */}
+                    
+                    {/* Hidden input to maintain form functionality */}
+                    <input type="hidden" name="quality" value={quality} />
+                    
                     <div className="h-4 w-px bg-gray-700 max-sm:hidden" />
                     <div>
                       <label

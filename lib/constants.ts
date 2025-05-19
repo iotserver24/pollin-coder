@@ -1,5 +1,9 @@
 export const MODELS = [
   {
+    label: "OpenAI GPT-4.1",
+    value: "openai-large",
+  },
+  {
     label: "OpenAI GPT-4.1-mini",
     value: "openai",
   },
@@ -7,10 +11,7 @@ export const MODELS = [
     label: "OpenAI GPT-4.1-nano",
     value: "openai-fast",
   },
-  {
-    label: "OpenAI GPT-4.1",
-    value: "openai-large",
-  },
+  
   {
     label: "Qwen 2.5 Coder 32B",
     value: "qwen-coder",
