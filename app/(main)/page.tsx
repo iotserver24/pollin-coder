@@ -47,7 +47,11 @@ export default function Home() {
     // Fetch project stats
     const fetchStats = async () => {
       try {
-        const stats = await getTotalProjectsCount();
+        const response = await fetch('/api/project-counts');
+        if (!response.ok) {
+          throw new Error('Failed to fetch project counts');
+        }
+        const stats = await response.json();
         setProjectStats(stats);
       } catch (error) {
         console.error('Error fetching project stats:', error);
