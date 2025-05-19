@@ -15,7 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useState, useRef, useTransition, useEffect } from "react";
-import { createChat, getTotalProjectsCount } from "./actions";
+import { createChat } from "./actions";
 import { Context } from "./providers";
 import Header from "@/components/header";
 import UploadIcon from "@/components/icons/upload-icon";
@@ -25,7 +25,6 @@ import { MODELS, SUGGESTED_PROMPTS } from "@/lib/constants";
 export default function Home() {
   const { setStreamPromise } = use(Context);
   const router = useRouter();
-  const [projectStats, setProjectStats] = useState<{ totalProjects: number; totalApps: number; totalChats: number } | null>(null);
 
   const [prompt, setPrompt] = useState("");
   const [model, setModel] = useState(MODELS[0].value);
@@ -37,6 +36,7 @@ export default function Home() {
   const selectedModel = MODELS.find((m) => m.value === model);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [animationLoaded, setAnimationLoaded] = useState(false);
+  const [projectCount, setProjectCount] = useState<number | null>(null);
 
   const [isPending, startTransition] = useTransition();
 
@@ -44,26 +44,20 @@ export default function Home() {
     // Trigger animations after component mounts
     setAnimationLoaded(true);
     
-    // Fetch project stats
-    const fetchStats = async () => {
+    // Fetch project count
+    const fetchProjectCount = async () => {
       try {
         const response = await fetch('/api/project-counts');
-        if (!response.ok) {
-          throw new Error('Failed to fetch project counts');
+        if (response.ok) {
+          const data = await response.json();
+          setProjectCount(data.count);
         }
-        const stats = await response.json();
-        setProjectStats(stats);
       } catch (error) {
-        console.error('Error fetching project stats:', error);
-        setProjectStats({
-          totalApps: 0,
-          totalChats: 0,
-          totalProjects: 0
-        });
+        console.error('Error fetching project count:', error);
       }
     };
     
-    fetchStats();
+    fetchProjectCount();
   }, []);
 
   const handleScreenshotUpload = async (event: any) => {
@@ -125,30 +119,24 @@ export default function Home() {
             </span>
           </div>
 
-          <div
-            className={`mb-4 inline-flex shrink-0 items-center rounded-full border-[0.5px] border-purple-500 bg-black px-7 py-2 text-xs text-purple-300 shadow-[0px_1px_1px_0px_rgba(168,85,247,0.35)] md:text-base opacity-0 ${
-              animationLoaded ? "animate-fadeIn" : ""
-            }`}
-            style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
-          >
-            <span className="text-center flex items-center gap-2">
-              Total Projects Built:{" "}
-              {projectStats ? (
-                <span className="font-semibold text-purple-400">{projectStats.totalProjects}</span>
-              ) : (
-                <div className="flex items-center gap-1">
-                  <Spinner className="size-3" />
-                  <span className="animate-pulse">Loading...</span>
-                </div>
-              )}
-            </span>
-          </div>
+          {projectCount !== null && (
+            <div
+              className={`mb-2 inline-flex shrink-0 items-center rounded-full border-[0.5px] border-green-500 bg-black px-5 py-1 text-xs text-green-300 shadow-[0px_1px_1px_0px_rgba(74,222,128,0.35)] md:text-sm opacity-0 ${
+                animationLoaded ? "animate-fadeIn" : ""
+              }`}
+              style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
+            >
+              <span className="text-center">
+                <span className="font-semibold text-green-400">{projectCount.toLocaleString()}</span> projects created so far!
+              </span>
+            </div>
+          )}
 
           <h1 
             className={`mt-4 text-balance text-center text-4xl leading-none text-white md:text-[64px] lg:mt-8 opacity-0 ${
               animationLoaded ? "animate-slideUp" : ""
             }`}
-            style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
+            style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}
           >
             Turn your <span className="text-purple-500">idea</span>
             <br className="hidden md:block" /> into an{" "}
