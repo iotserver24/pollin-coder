@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useMemo, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -44,32 +44,30 @@ function ParticleField({ count = 1000 }) {
   );
 }
 
-export default function ThreeCanvas() {
+// Context loss handler component
+function ContextLossHandler() {
+  const { gl } = useThree();
   const [contextLost, setContextLost] = useState(false);
 
-  const handleContextLost = (event: Event) => {
-    event.preventDefault();
-    setContextLost(true);
-  };
-
-  const handleContextRestored = () => {
-    setContextLost(false);
-  };
-
   useEffect(() => {
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-      canvas.addEventListener('webglcontextlost', handleContextLost);
-      canvas.addEventListener('webglcontextrestored', handleContextRestored);
-    }
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      setContextLost(true);
+    };
+
+    const handleContextRestored = () => {
+      setContextLost(false);
+    };
+
+    const canvas = gl.domElement;
+    canvas.addEventListener('webglcontextlost', handleContextLost);
+    canvas.addEventListener('webglcontextrestored', handleContextRestored);
 
     return () => {
-      if (canvas) {
-        canvas.removeEventListener('webglcontextlost', handleContextLost);
-        canvas.removeEventListener('webglcontextrestored', handleContextRestored);
-      }
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
+      canvas.removeEventListener('webglcontextrestored', handleContextRestored);
     };
-  }, []);
+  }, [gl]);
 
   if (contextLost) {
     return (
@@ -81,12 +79,13 @@ export default function ThreeCanvas() {
     );
   }
 
+  return null;
+}
+
+export default function ThreeCanvas() {
   return (
-    <Canvas 
-      camera={{ position: [0, 0, 5], fov: 60 }}
-      onContextLost={handleContextLost}
-      onContextRestore={handleContextRestored}
-    >
+    <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+      <ContextLossHandler />
       <ambientLight intensity={0.2} />
       <ParticleField />
       <mesh scale={[80, 80, 1]} position={[0, 0, -5]}>
