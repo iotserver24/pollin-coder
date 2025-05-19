@@ -302,7 +302,7 @@ export function getMainCodingPrompt(mostSimilarExample: string) {
   }
   \`\`\`
 
-  This app allows users to generate images from text descriptions using the Pollinations AI API. It features:
+  This app allows users to generate images from text descriptions using the Pollinations API. It features:
 
   1. A text input where users can enter their image description
   2. A generate button that calls the Pollinations Image API
@@ -492,6 +492,167 @@ export function getMainCodingPrompt(mostSimilarExample: string) {
   6. Clean visual distinction between user and assistant messages
 
   The app uses the Pollinations API endpoint \`https://text.pollinations.ai/openai\` with a POST request that follows the OpenAI chat completion format, making it simple to implement yet powerful.
+  `;
+
+  // Add Cloud Storage Integration section
+  systemPrompt += `
+  # Cloud Storage Integration with Catbox
+
+  When users need file storage capabilities, use Catbox.moe as the cloud storage solution. Here's how to integrate it:
+
+  ## Catbox API Guidelines
+  - File size limit: Up to 200MB per file
+  - Supported file types: Most common formats (except .exe, .scr, .cpl, .doc*, .jar)
+  - Files are stored permanently unless explicitly deleted
+  - No authentication required for basic uploads
+  - Direct file URLs are provided after upload
+
+  ## Implementation Example
+
+  Here's an example of creating a file upload component using Catbox:
+
+  \`\`\`tsx{filename=file-upload.tsx}
+  import { useState } from 'react'
+  import { Button } from "/components/ui/button"
+  import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card"
+  import { Upload, Loader } from 'lucide-react'
+
+  export default function FileUpload() {
+    const [file, setFile] = useState<File | null>(null)
+    const [uploading, setUploading] = useState(false)
+    const [fileUrl, setFileUrl] = useState<string | null>(null)
+    const [error, setError] = useState<string | null>(null)
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e.target.files?.[0]
+      if (selectedFile) {
+        // Check file size (200MB limit)
+        if (selectedFile.size > 200 * 1024 * 1024) {
+          setError('File size must be less than 200MB')
+          return
+        }
+        setFile(selectedFile)
+        setError(null)
+      }
+    }
+
+    const uploadToCatbox = async () => {
+      if (!file) return
+
+      try {
+        setUploading(true)
+        setError(null)
+
+        const formData = new FormData()
+        formData.append('reqtype', 'file')
+        formData.append('fileToUpload', file)
+
+        const response = await fetch('https://catbox.moe/user/api.php', {
+          method: 'POST',
+          body: formData
+        })
+
+        if (!response.ok) throw new Error('Upload failed')
+        
+        const fileUrl = await response.text()
+        setFileUrl(fileUrl)
+      } catch (err) {
+        console.error('Upload error:', err)
+        setError('Failed to upload file. Please try again.')
+      } finally {
+        setUploading(false)
+      }
+    }
+
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">File Upload</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="w-full max-w-md">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="file-upload"
+                  disabled={uploading}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="flex items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
+                >
+                  <div className="flex flex-col items-center">
+                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-500">
+                      {file ? file.name : 'Click to select a file'}
+                    </span>
+                  </div>
+                </label>
+              </div>
+
+              {error && (
+                <div className="text-red-500 text-sm">{error}</div>
+              )}
+
+              {file && (
+                <Button 
+                  onClick={uploadToCatbox}
+                  disabled={uploading}
+                  className="w-full max-w-md"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader className="h-4 w-4 animate-spin mr-2" />
+                      Uploading...
+                    </>
+                  ) : (
+                    'Upload to Catbox'
+                  )}
+                </Button>
+              )}
+
+              {fileUrl && (
+                <div className="w-full max-w-md p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm font-medium mb-2">File uploaded successfully!</p>
+                  <a 
+                    href={fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-500 hover:underline break-all"
+                  >
+                    {fileUrl}
+                  </a>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+  \`\`\`
+
+  This file upload component demonstrates how to integrate Catbox.moe for cloud storage. Key features include:
+
+  1. File selection with size validation (200MB limit)
+  2. Upload progress indication
+  3. Error handling for failed uploads
+  4. Display of the uploaded file URL
+  5. Responsive design for both mobile and desktop
+
+  When implementing cloud storage features, remember to:
+  - Validate file types and sizes before upload
+  - Handle upload errors gracefully
+  - Provide clear feedback during the upload process
+  - Display the uploaded file URL for easy access
+  - Consider implementing file type restrictions based on your app's needs
+  - Add appropriate loading states and error messages
+  - Ensure the UI is responsive and accessible
+
+  The component uses the Catbox.moe API endpoint \`https://catbox.moe/user/api.php\` for file uploads, which provides a simple and reliable way to store files in the cloud.
   `;
 
   return dedent(systemPrompt);
