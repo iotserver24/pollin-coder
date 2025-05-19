@@ -36,6 +36,11 @@ export const MODELS = [
 
 export const SUGGESTED_PROMPTS = [
   {
+    title: "AI chat and image genration",
+    description:
+      "Create a modern 3D interactive website that includes an AI chat interface and image generation capabilities. The site should have a dynamic 3D background, interactive elements, and seamless integration of AI features for both text conversations and image creation.",
+  },
+  {
     title: "SaaS Landing page",
     description:
       "A landing page for a SaaS business that includes a clear value proposition in a prominent hero section, concise feature overviews, testimonials, pricing, and a clear call-to-action button leading to a free trial or demo.",
