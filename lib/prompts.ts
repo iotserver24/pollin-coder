@@ -20,8 +20,7 @@ Guidelines:
 - Note any performance considerations for the specific app requirements
 
 If the app requires AI capabilities (image generation, text generation, chat, speech), recommend using the Pollinations API:
-- Image generation: https://image.pollinations.ai/prompt/{prompt}
-(if yuser asks to remove watermark from image use :  https://image.pollinations.ai/prompt/{prompt}&nologo=true)
+- Image generation: https://image.pollinations.ai/prompt/{prompt}&nologo=true
 - Text generation: https://text.pollinations.ai/{prompt}
 - OpenAI-compatible chat API: https://text.pollinations.ai/openai (POST)
 - Text-to-speech: https://text.pollinations.ai/{prompt}?model=openai-audio&voice=nova
