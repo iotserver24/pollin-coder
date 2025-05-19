@@ -15,7 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useState, useRef, useTransition, useEffect } from "react";
-import { createChat } from "./actions";
+import { createChat, getTotalProjectsCount } from "./actions";
 import { Context } from "./providers";
 import Header from "@/components/header";
 import UploadIcon from "@/components/icons/upload-icon";
@@ -25,6 +25,7 @@ import { MODELS, SUGGESTED_PROMPTS } from "@/lib/constants";
 export default function Home() {
   const { setStreamPromise } = use(Context);
   const router = useRouter();
+  const [projectStats, setProjectStats] = useState<{ totalProjects: number; totalApps: number; totalChats: number } | null>(null);
 
   const [prompt, setPrompt] = useState("");
   const [model, setModel] = useState(MODELS[0].value);
@@ -42,6 +43,9 @@ export default function Home() {
   useEffect(() => {
     // Trigger animations after component mounts
     setAnimationLoaded(true);
+    
+    // Fetch project stats
+    getTotalProjectsCount().then(setProjectStats);
   }, []);
 
   const handleScreenshotUpload = async (event: any) => {
@@ -102,6 +106,19 @@ export default function Home() {
               <span className="font-semibold text-purple-400"> R3AP3R editz </span>
             </span>
           </div>
+
+          {projectStats && (
+            <div
+              className={`mb-4 inline-flex shrink-0 items-center rounded-full border-[0.5px] border-purple-500 bg-black px-7 py-2 text-xs text-purple-300 shadow-[0px_1px_1px_0px_rgba(168,85,247,0.35)] md:text-base opacity-0 ${
+                animationLoaded ? "animate-fadeIn" : ""
+              }`}
+              style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
+            >
+              <span className="text-center">
+                Total Projects Built: <span className="font-semibold text-purple-400">{projectStats.totalProjects}</span>
+              </span>
+            </div>
+          )}
 
           <h1 
             className={`mt-4 text-balance text-center text-4xl leading-none text-white md:text-[64px] lg:mt-8 opacity-0 ${

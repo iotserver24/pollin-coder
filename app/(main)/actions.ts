@@ -245,3 +245,17 @@ export async function createMessage(
 
   return newMessage;
 }
+
+export async function getTotalProjectsCount() {
+  const prisma = getPrisma();
+  const [generatedAppsCount, chatsCount] = await Promise.all([
+    prisma.generatedApp.count(),
+    prisma.chat.count()
+  ]);
+  
+  return {
+    totalApps: generatedAppsCount,
+    totalChats: chatsCount,
+    totalProjects: generatedAppsCount + chatsCount
+  };
+}
