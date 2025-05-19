@@ -12,7 +12,7 @@
 # next.js
 /.next/
 /out/
-
+/system-prompts-and-models-of-ai-tools-main
 # production
 /build
 
