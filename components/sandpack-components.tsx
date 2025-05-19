@@ -5,7 +5,7 @@ import {
   SandpackPreview,
   useSandpack,
 } from "@codesandbox/sandpack-react/unstyled";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 
 interface SandpackComponentsProps {
@@ -66,6 +66,36 @@ export default function SandpackComponents({
       </div>
     );
   };
+
+  // Force a minimum loading time to ensure our animation shows
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  useEffect(() => {
+    // Set a minimum loading time of 2 seconds
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  if (!isLoaded) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="text-center">
+          <div className="mb-6 text-xl font-medium text-purple-600">Loading code preview...</div>
+          <div className="flex justify-center space-x-4 mb-6">
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold animate-bounce" style={{ animationDelay: "0ms", animationDuration: "1s" }}>1</div>
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold animate-bounce" style={{ animationDelay: "300ms", animationDuration: "1s" }}>2</div>
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold animate-bounce" style={{ animationDelay: "600ms", animationDuration: "1s" }}>3</div>
+          </div>
+          <div className="h-3 w-64 bg-gray-200 rounded-full overflow-hidden mx-auto">
+            <div className="h-full bg-purple-500 animate-pulse" style={{ animationDuration: "1.5s" }}></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <SandpackProvider

@@ -90,9 +90,14 @@ const DynamicSandpack = dynamic(
     loading: () => (
       <div className="flex h-full w-full items-center justify-center">
         <div className="text-center">
-          <div className="mb-4 text-lg">Loading code preview...</div>
-          <div className="h-2 w-40 bg-gray-200 rounded-full overflow-hidden mx-auto">
-            <div className="h-full bg-blue-500 animate-pulse"></div>
+          <div className="mb-6 text-xl font-medium text-purple-600">Loading code preview...</div>
+          <div className="flex justify-center space-x-4 mb-6">
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold animate-bounce" style={{ animationDelay: "0ms", animationDuration: "1s" }}>1</div>
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold animate-bounce" style={{ animationDelay: "300ms", animationDuration: "1s" }}>2</div>
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold animate-bounce" style={{ animationDelay: "600ms", animationDuration: "1s" }}>3</div>
+          </div>
+          <div className="h-3 w-64 bg-gray-200 rounded-full overflow-hidden mx-auto">
+            <div className="h-full bg-purple-500 animate-pulse" style={{ animationDuration: "1.5s" }}></div>
           </div>
         </div>
       </div>
