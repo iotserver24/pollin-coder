@@ -45,7 +45,21 @@ export default function Home() {
     setAnimationLoaded(true);
     
     // Fetch project stats
-    getTotalProjectsCount().then(setProjectStats);
+    const fetchStats = async () => {
+      try {
+        const stats = await getTotalProjectsCount();
+        setProjectStats(stats);
+      } catch (error) {
+        console.error('Error fetching project stats:', error);
+        setProjectStats({
+          totalApps: 0,
+          totalChats: 0,
+          totalProjects: 0
+        });
+      }
+    };
+    
+    fetchStats();
   }, []);
 
   const handleScreenshotUpload = async (event: any) => {

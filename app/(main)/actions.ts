@@ -247,15 +247,24 @@ export async function createMessage(
 }
 
 export async function getTotalProjectsCount() {
-  const prisma = getPrisma();
-  const [generatedAppsCount, chatsCount] = await Promise.all([
-    prisma.generatedApp.count(),
-    prisma.chat.count()
-  ]);
-  
-  return {
-    totalApps: generatedAppsCount,
-    totalChats: chatsCount,
-    totalProjects: generatedAppsCount + chatsCount
-  };
+  try {
+    const prisma = getPrisma();
+    const [generatedAppsCount, chatsCount] = await Promise.all([
+      prisma.generatedApp.count(),
+      prisma.chat.count()
+    ]);
+    
+    return {
+      totalApps: generatedAppsCount,
+      totalChats: chatsCount,
+      totalProjects: generatedAppsCount + chatsCount
+    };
+  } catch (error) {
+    console.error('Error fetching project counts:', error);
+    return {
+      totalApps: 0,
+      totalChats: 0,
+      totalProjects: 0
+    };
+  }
 }
