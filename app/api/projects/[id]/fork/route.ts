@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const prisma = getPrisma();
     const originalChat = await prisma.chat.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: { messages: true }
     });
 
