@@ -1,20 +1,13 @@
 import { getPrisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+// @ts-ignore
+import { NextResponse } from "next/server";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export async function POST(
-  request: NextRequest,
-  props: Props
-) {
+// @ts-ignore
+export async function POST(request, { params }) {
   try {
     const prisma = getPrisma();
     const originalChat = await prisma.chat.findUnique({
-      where: { id: props.params.id },
+      where: { id: params.id },
       include: { messages: true }
     });
 
