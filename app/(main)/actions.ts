@@ -46,7 +46,7 @@ export async function createChat(
             content: prompt,
           },
         ],
-        referrer: "r3-aicoder"
+        referrer: "pollin-coder"
       }),
     });
     
@@ -83,7 +83,7 @@ export async function createChat(
             content: prompt,
           },
         ],
-        referrer: "r3-aicoder"
+        referrer: "pollin-coder"
       }),
     });
     
@@ -131,7 +131,7 @@ export async function createChat(
             ],
           },
         ],
-        referrer: "r3-aicoder"
+        referrer: "pollin-coder"
       }),
     });
     
@@ -166,7 +166,7 @@ export async function createChat(
         ],
         temperature: 0.2,
         max_tokens: 3000,
-        referrer: "r3-aicoder"
+        referrer: "pollin-coder"
       }),
     });
     
