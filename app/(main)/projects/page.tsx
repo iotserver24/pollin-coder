@@ -18,6 +18,7 @@ export default function ProjectsPage() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [forkingProjectId, setForkingProjectId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProjects();
@@ -37,6 +38,7 @@ export default function ProjectsPage() {
 
   const handleFork = async (projectId: string) => {
     try {
+      setForkingProjectId(projectId);
       const response = await fetch(`/api/projects/${projectId}/fork`, {
         method: 'POST',
       });
@@ -46,6 +48,8 @@ export default function ProjectsPage() {
       }
     } catch (error) {
       console.error('Failed to fork project:', error);
+    } finally {
+      setForkingProjectId(null);
     }
   };
 
@@ -91,9 +95,17 @@ export default function ProjectsPage() {
                 </div>
                 <button 
                   onClick={() => handleFork(project.id)}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                  disabled={forkingProjectId === project.id}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                  Fork Project
+                  {forkingProjectId === project.id ? (
+                    <>
+                      <Spinner className="w-5 h-5 mr-2" />
+                      Forking...
+                    </>
+                  ) : (
+                    'Fork Project'
+                  )}
                 </button>
               </div>
             ))}
