@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { Pool } from "@neondatabase/serverless";
 import { z } from "zod";
+import { callPollinationsAPIStream } from "@/lib/pollinations";
 
 export async function POST(req: Request) {
   const neon = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -35,27 +36,14 @@ export async function POST(req: Request) {
     messages = [messages[0], messages[1], messages[2], ...messages.slice(-7)];
   }
 
-  const pollinationsApiUrl = "https://text.pollinations.ai/openai";
-  
-  const response = await fetch(pollinationsApiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      messages: messages.map((m) => ({ role: m.role, content: m.content })),
-      stream: true,
-      temperature: 0.2,
-      max_tokens: 9000,
-      referrer: "r3-aicoder"
-    }),
+  const response = await callPollinationsAPIStream({
+    model,
+    messages: messages.map((m: any) => ({ role: m.role, content: m.content })),
+    stream: true,
+    temperature: 0.2,
+    max_tokens: 9000,
+    referrer: "r3-aicoder"
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Pollinations API error: ${response.status} - ${errorText}`);
-  }
 
   return new Response(response.body);
 }
