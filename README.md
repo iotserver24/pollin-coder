@@ -27,7 +27,34 @@
 ## Getting Started
 
 1. Clone the repo: `git clone https://github.com/iotserver24/pollin-coder`
-2. Run `npm install` and `npm run dev` to install dependencies and start the app locally
+2. Copy `.example.env` to `.env.local` and configure your environment variables:
+   ```bash
+   cp .example.env .env.local
+   ```
+3. Run `npm install` and `npm run dev` to install dependencies and start the app locally
+
+## Environment Variables
+
+The application uses the following environment variables:
+
+- `POLLINATIONS_AI_TOKEN` (optional): Your Pollinations AI token for authentication. If not provided, the app will work without authentication but may have rate limits.
+- `HELICONE_API_KEY` (optional): API key for Helicone observability
+- `DATABASE_URL`: Database connection string (required for production)
+
+### Pollinations AI Authentication
+
+To use Pollinations AI with authentication:
+
+1. Get your token from [Pollinations AI](https://pollinations.ai/)
+2. Add it to your `.env.local` file:
+   ```
+   POLLINATIONS_AI_TOKEN=your_token_here
+   ```
+
+The app will automatically use the token for all API calls to Pollinations AI, providing:
+- Higher rate limits
+- Better reliability
+- Access to premium features
 
 ## Contributing
 

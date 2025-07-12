@@ -19,10 +19,46 @@ Click the links below to see examples in your browser:
 
 ---
 
+## Authentication 🔐
+
+Pollinations AI supports token-based authentication for enhanced access and higher rate limits.
+
+### Token Authentication
+
+To use authenticated requests, you can provide your token in two ways:
+
+1. **URL Parameter:** Add `?token=YOUR_TOKEN` to the API URL
+2. **Authorization Header:** Include `Authorization: Bearer YOUR_TOKEN` in the request headers
+
+**Example:**
+```bash
+# URL parameter method
+curl "https://text.pollinations.ai/openai?token=your_token_here" \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"model": "openai-fast", "messages": [{"role": "user", "content": "Hello"}]}'
+
+# Authorization header method
+curl "https://text.pollinations.ai/openai" \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your_token_here" \
+  -d '{"model": "openai-fast", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+**Benefits of Authentication:**
+- Higher rate limits
+- Better reliability
+- Access to premium features
+- Priority processing
+
+---
+
 ## Summary / Navigation
 
 - [Pollinations.AI API Documentation](#pollinationsai-api-documentation)
   - [Quickstart](#quickstart)
+  - [Authentication 🔐](#authentication-)
   - [Summary / Navigation](#summary--navigation)
   - [Generate Image API 🖼️](#generate-image-api-️)
     - [Text-To-Image (GET) 🖌️](#text-to-image-get-️)
