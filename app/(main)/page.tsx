@@ -52,17 +52,56 @@ export default function Home() {
     setAnimationLoaded(true);
 
     // Fetch project count when component mounts
-    setIsCountLoading(true);
-    fetch('/api/project-count')
-      .then(res => res.json())
-      .then(data => {
+    const fetchProjectCount = async () => {
+      setIsCountLoading(true);
+      try {
+        // Add timestamp to prevent caching
+        const timestamp = Date.now();
+        const response = await fetch(`/api/project-count?t=${timestamp}`, {
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
         setProjectCount(data.count);
-        setIsCountLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Failed to fetch project count:', err);
+        // Retry once after a short delay
+        setTimeout(async () => {
+          try {
+            const timestamp = Date.now();
+            const response = await fetch(`/api/project-count?t=${timestamp}`, {
+              method: 'GET',
+              headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              setProjectCount(data.count);
+            }
+          } catch (retryErr) {
+            console.error('Retry failed to fetch project count:', retryErr);
+          } finally {
+            setIsCountLoading(false);
+          }
+        }, 1000);
+        return;
+      } finally {
         setIsCountLoading(false);
-      });
+      }
+    };
+
+    fetchProjectCount();
   }, []);
 
   const handleScreenshotUpload = async (event: any) => {
@@ -138,7 +177,37 @@ export default function Home() {
                 <span className="animate-pulse">Loading...</span>
               </span>
             ) : (
-              <span className="font-semibold">{projectCount}</span>
+              <span className="inline-flex items-center gap-2">
+                <span className="font-semibold">{projectCount}</span>
+                <button
+                  onClick={() => {
+                    setIsCountLoading(true);
+                    const timestamp = Date.now();
+                    fetch(`/api/project-count?t=${timestamp}`, {
+                      method: 'GET',
+                      headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                      }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                      setProjectCount(data.count);
+                      setIsCountLoading(false);
+                    })
+                    .catch(err => {
+                      console.error('Failed to refresh project count:', err);
+                      setIsCountLoading(false);
+                    });
+                  }}
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                  title="Refresh count"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </button>
+              </span>
             )}
           </div>
 
