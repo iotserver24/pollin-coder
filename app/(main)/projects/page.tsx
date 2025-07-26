@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import Spinner from "@/components/spinner";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface Project {
   id: string;
@@ -56,6 +57,7 @@ const LoadingSkeleton = () => (
 
 export default function ProjectsPage() {
   const router = useRouter();
+  const analytics = useAnalytics();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -63,8 +65,10 @@ export default function ProjectsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Track gallery view
+    analytics.trackGalleryViewed();
     fetchProjects();
-  }, []);
+  }, [analytics]);
 
   const fetchProjects = async (isRefresh = false) => {
     try {
@@ -95,6 +99,10 @@ export default function ProjectsPage() {
   const handleFork = async (projectId: string) => {
     try {
       setForkingProjectId(projectId);
+      
+      // Track project fork attempt
+      analytics.trackProjectForked(projectId);
+      
       const response = await fetch(`/api/projects/${projectId}/fork`, {
         method: 'POST',
       });
@@ -109,6 +117,7 @@ export default function ProjectsPage() {
       }
     } catch (error) {
       console.error('Failed to fork project:', error);
+      analytics.trackError('project_fork_failed', error instanceof Error ? error.message : 'Fork failed');
       alert('Failed to fork project. Please try again.');
     } finally {
       setForkingProjectId(null);

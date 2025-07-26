@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import PlausibleProvider from "next-plausible";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 let title = "Pollin Coder – AI Code Generator by R3AP3R editz";
@@ -44,6 +46,8 @@ export default function RootLayout({
       </head>
 
       {children}
+      <Analytics />
+      <SpeedInsights />
     </html>
   );
 }

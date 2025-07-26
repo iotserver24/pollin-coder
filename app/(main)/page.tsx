@@ -22,6 +22,7 @@ import UploadIcon from "@/components/icons/upload-icon";
 import { XCircleIcon } from "@heroicons/react/20/solid";
 import { MODELS, SUGGESTED_PROMPTS } from "@/lib/constants";
 import { getPrisma } from "@/lib/prisma";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 async function getProjectCount() {
   const prisma = getPrisma();
@@ -31,6 +32,7 @@ async function getProjectCount() {
 export default function Home() {
   const { setStreamPromise } = use(Context);
   const router = useRouter();
+  const analytics = useAnalytics();
   const [projectCount, setProjectCount] = useState<number>(0);
   const [isCountLoading, setIsCountLoading] = useState(true);
 
@@ -111,6 +113,9 @@ export default function Home() {
     setScreenshotLoading(true);
     let file = event.target.files[0];
     
+    // Track screenshot upload attempt
+    analytics.trackScreenshotUploaded();
+    
     // Create form data
     const formData = new FormData();
     formData.append('reqtype', 'fileupload');
@@ -130,6 +135,7 @@ export default function Home() {
       setScreenshotUrl(data.url);
     } catch (error) {
       console.error('Upload error:', error);
+      analytics.trackError('screenshot_upload_failed', error instanceof Error ? error.message : 'Upload failed');
       alert('Failed to upload image. Please try again.');
     } finally {
       setScreenshotLoading(false);
@@ -234,6 +240,12 @@ export default function Home() {
                 assert.ok(typeof prompt === "string");
                 assert.ok(typeof model === "string");
                 assert.ok(quality === "high" || quality === "low");
+
+                // Track project creation
+                analytics.trackProjectCreated(model, quality);
+                if (screenshotUrl) {
+                  analytics.trackScreenshotUploaded();
+                }
 
                 const { chatId, lastMessageId } = await createChat(
                   prompt,
