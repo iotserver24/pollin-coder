@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import Spinner from "@/components/spinner";
@@ -63,12 +63,16 @@ export default function ProjectsPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [forkingProjectId, setForkingProjectId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const hasTrackedView = useRef(false);
 
   useEffect(() => {
-    // Track gallery view
-    analytics.trackGalleryViewed();
+    // Track gallery view only once
+    if (!hasTrackedView.current) {
+      analytics.trackGalleryViewed();
+      hasTrackedView.current = true;
+    }
     fetchProjects();
-  }, [analytics]);
+  }, []); // Remove analytics from dependency array
 
   const fetchProjects = async (isRefresh = false) => {
     try {
