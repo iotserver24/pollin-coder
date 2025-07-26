@@ -176,7 +176,7 @@ export default function ProjectsPage() {
           <div className="flex flex-col items-center justify-center h-64">
             <div className="text-red-400 text-lg mb-4">{error}</div>
             <button
-              onClick={fetchProjects}
+              onClick={() => fetchProjects(true)}
               className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors"
             >
               Try Again
