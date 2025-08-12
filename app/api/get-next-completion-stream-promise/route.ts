@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     stream: true,
     temperature: 0.2,
     max_tokens: 9000,
-    referrer: "r3-aicoder"
+    referrer: "pollin-coder"
   });
 
   return new Response(response.body);

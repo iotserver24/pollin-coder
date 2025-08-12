@@ -32,6 +32,10 @@ export const MODELS = [
     label: "DeepSeek R1",
     value: "deepseek-reasoning",
   },
+  {
+    label: "OpenAI GPT-5 Nano",
+    value: "gpt-5-nano",
+  },
 ];
 
 export const SUGGESTED_PROMPTS = [
